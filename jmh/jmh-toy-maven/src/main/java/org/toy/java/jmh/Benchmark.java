@@ -1,7 +1,7 @@
 package org.toy.java.jmh;
 
 import java.util.concurrent.TimeUnit;
-import org.openjdk.jmh.annotations.Benchmark;
+
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Measurement;
@@ -17,14 +17,14 @@ import org.openjdk.jmh.annotations.Warmup;
 @OutputTimeUnit(value = TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 @Warmup(iterations = 3)
-public class Bench {
+public class Benchmark {
 
-    @Benchmark
+    @org.openjdk.jmh.annotations.Benchmark
     public void codeToBenchmark1() {
         Code.method1(2, 3);
     }
 
-    @Benchmark
+    @org.openjdk.jmh.annotations.Benchmark
     public void codeToBenchmark2() {
         Code.method2(2, 3);
     }
