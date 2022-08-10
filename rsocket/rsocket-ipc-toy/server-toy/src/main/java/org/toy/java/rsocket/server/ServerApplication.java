@@ -7,10 +7,12 @@ import io.rsocket.ipc.Server;
 import io.rsocket.ipc.decoders.CompositeMetadataDecoder;
 import io.rsocket.ipc.marshallers.Primitives;
 import io.rsocket.ipc.marshallers.Strings;
+import io.rsocket.transport.netty.server.CloseableChannel;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.tcp.TcpServer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -19,11 +21,6 @@ public class ServerApplication {
 
     public static void main(String[] args) {
         RequestHandlingRSocket requestHandler = new RequestHandlingRSocket(new CompositeMetadataDecoder());
-
-        var closeableChannel = RSocketServer.create()
-            .acceptor((setup, sendingSocket) -> Mono.just(requestHandler))
-            .bind(TcpServerTransport.create("localhost", 7000))
-            .block();
 
         AtomicBoolean ff = new AtomicBoolean();
 
@@ -61,6 +58,18 @@ public class ServerApplication {
 
         requestHandler.withEndpoint(service);
 
+        log.info("Creating TcpServer...");
+        TcpServer tcpServer = TcpServer.create().host("localhost").port(7000);
+        tcpServer.warmup().block();
+
+        log.info("Creating RSocketServer...");
+        CloseableChannel closeableChannel = RSocketServer
+            .create()
+            .acceptor((setup, sendingSocket) -> Mono.just(requestHandler))
+            .bind(TcpServerTransport.create(tcpServer))
+            .block();
+
+        log.info("Finish initialization...");
         assert closeableChannel != null;
         closeableChannel.onClose().block();
         closeableChannel.dispose();
