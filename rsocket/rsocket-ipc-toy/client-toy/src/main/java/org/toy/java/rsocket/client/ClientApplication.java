@@ -11,6 +11,8 @@ import io.rsocket.transport.netty.client.TcpClientTransport;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
+
 /**
  * RSocket IPC Client
  *
@@ -26,6 +28,8 @@ public class ClientApplication {
                     .create("localhost", 7000)
             )
             .block();
+
+        Objects.requireNonNull(rsocket);
 
         Client<CharSequence, String> helloService =
             Client.service("HelloService")
@@ -69,24 +73,22 @@ public class ClientApplication {
             .requestResponse("count", Primitives.intUnmarshaller())
             .apply("hello")
             .block();
-        log.info("{}", count);
+        log.info("count = {}", count);
 
         long l = System.currentTimeMillis();
         String toString = helloService
             .requestStream("toString", Primitives.longMarshaller())
             .apply(l)
             .blockLast();
-        log.info("{}", toString);
+        log.info("toString = {}", toString);
 
         Integer increment =
             helloService
                 .requestResponse("increment", Primitives.intMarshaller(), Primitives.intUnmarshaller())
                 .apply(1)
                 .block();
-        log.info("{}", increment);
+        log.info("increment = {}", increment);
 
-        if (rsocket != null) {
-            rsocket.dispose();
-        }
+        rsocket.dispose();
     }
 }
