@@ -16,6 +16,12 @@ import reactor.netty.tcp.TcpServer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * RSocket IPC Server
+ *
+ * @author aaronchenwei
+ *
+ */
 @Slf4j
 public class ServerApplication {
 
@@ -42,7 +48,8 @@ public class ServerApplication {
                     Primitives.intMarshaller(),
                     (integer, byteBuf) -> Mono.just(integer + 1))
                 .requestStream(
-                    "helloStream", (s, byteBuf) -> Flux.range(1, 10).map(i -> i + " - Hello -> " + s))
+                    "helloStream",
+                    (s, byteBuf) -> Flux.range(1, 10).map(i -> i + " - Hello -> " + s))
                 .requestStream(
                     "toString",
                     Primitives.longUnmarshaller(),
@@ -53,13 +60,16 @@ public class ServerApplication {
                         ff.set(true);
                         return Mono.empty();
                     })
-                .requestChannel("helloChannel", (s, publisher, byteBuf) -> Flux.just("Hello -> " + s))
+                .requestChannel("helloChannel",
+                    (s, publisher, byteBuf) -> Flux.just("Hello -> " + s))
                 .toIPCRSocket();
 
         requestHandler.withEndpoint(service);
 
         log.info("Creating TcpServer...");
         TcpServer tcpServer = TcpServer.create().host("localhost").port(7000);
+
+        // warmup rsocket server
         tcpServer.warmup().block();
 
         log.info("Creating RSocketServer...");

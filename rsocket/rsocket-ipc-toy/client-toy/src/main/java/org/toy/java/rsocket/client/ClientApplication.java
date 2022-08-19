@@ -11,12 +11,21 @@ import io.rsocket.transport.netty.client.TcpClientTransport;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+/**
+ * RSocket IPC Client
+ *
+ * @author aaronchenwei
+ */
 @Slf4j
 public class ClientApplication {
 
     public static void main(String[] args) {
-        RSocket rsocket =
-            RSocketConnector.connectWith(TcpClientTransport.create("localhost", 7000)).block();
+        RSocket rsocket = RSocketConnector
+            .connectWith(
+                TcpClientTransport
+                    .create("localhost", 7000)
+            )
+            .block();
 
         Client<CharSequence, String> helloService =
             Client.service("HelloService")
@@ -27,25 +36,46 @@ public class ClientApplication {
                 .marshall(Strings.marshaller())
                 .unmarshall(Strings.unmarshaller());
 
-        String r1 = helloService.requestResponse("hello").apply("Alice").block();
+        String r1 = helloService
+            .requestResponse("hello")
+            .apply("Alice")
+            .block();
         log.info("r1 = {}", r1);
 
-        String r2 = helloService.requestResponse("goodbye").apply("Bob").block();
+        String r2 = helloService
+            .requestResponse("goodbye")
+            .apply("Bob")
+            .block();
         log.info("r2 = {}", r2);
 
-        String first  = helloService.requestStream("helloStream").apply("Carol").blockFirst();
+        String first = helloService
+            .requestStream("helloStream")
+            .apply("Carol")
+            .blockFirst();
         log.info("{}", first);
 
-        helloService.fireAndForget("ff").apply("boom").block();
+        helloService
+            .fireAndForget("ff")
+            .apply("boom")
+            .block();
 
-        String r3 = helloService.requestChannel("helloChannel").apply(Mono.just("Eve")).blockLast();
+        String r3 = helloService
+            .requestChannel("helloChannel")
+            .apply(Mono.just("Eve"))
+            .blockLast();
         log.info("{}", r3);
 
-        int count = helloService.requestResponse("count", Primitives.intUnmarshaller()).apply("hello").block();
+        Integer count = helloService
+            .requestResponse("count", Primitives.intUnmarshaller())
+            .apply("hello")
+            .block();
         log.info("{}", count);
 
         long l = System.currentTimeMillis();
-        String toString = helloService.requestStream("toString", Primitives.longMarshaller()).apply(l).blockLast();
+        String toString = helloService
+            .requestStream("toString", Primitives.longMarshaller())
+            .apply(l)
+            .blockLast();
         log.info("{}", toString);
 
         Integer increment =
@@ -53,8 +83,10 @@ public class ClientApplication {
                 .requestResponse("increment", Primitives.intMarshaller(), Primitives.intUnmarshaller())
                 .apply(1)
                 .block();
-        log.info("{}", increment.intValue());
+        log.info("{}", increment);
 
-        rsocket.dispose();
+        if (rsocket != null) {
+            rsocket.dispose();
+        }
     }
 }
