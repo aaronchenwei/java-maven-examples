@@ -36,8 +36,14 @@ public class ServerApplication {
                 .noTracer()
                 .marshall(Strings.marshaller())
                 .unmarshall(Strings.unmarshaller())
-                .requestResponse("hello", (s, byteBuf) -> Mono.just("Hello -> " + s))
-                .requestResponse("goodbye", (s, byteBuf) -> Mono.just("Goodbye -> " + s))
+                .requestResponse(
+                    "hello",
+                    (s, byteBuf) -> Mono.just("Hello -> " + s)
+                )
+                .requestResponse(
+                    "goodbye",
+                    (s, byteBuf) -> Mono.just("Goodbye -> " + s)
+                )
                 .requestResponse(
                     "count",
                     Primitives.intMarshaller(),
@@ -60,14 +66,18 @@ public class ServerApplication {
                         ff.set(true);
                         return Mono.empty();
                     })
-                .requestChannel("helloChannel",
+                .requestChannel(
+                    "helloChannel",
                     (s, publisher, byteBuf) -> Flux.just("Hello -> " + s))
                 .toIPCRSocket();
 
         requestHandler.withEndpoint(service);
 
         log.info("Creating TcpServer...");
-        TcpServer tcpServer = TcpServer.create().host("localhost").port(7000);
+        TcpServer tcpServer = TcpServer
+            .create()
+            .host("localhost")
+            .port(7000);
 
         // warmup rsocket server
         tcpServer.warmup().block();
