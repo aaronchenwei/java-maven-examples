@@ -1,1 +1,1 @@
-# java-toys
+# java-maven-toys
