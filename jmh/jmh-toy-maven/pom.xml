@@ -16,7 +16,7 @@
 
     <uberjar.name>benchmarks</uberjar.name>
 
-    <jmh.version>1.35</jmh.version>
+    <jmh.version>1.36</jmh.version>
   </properties>
 
   <dependencies>
