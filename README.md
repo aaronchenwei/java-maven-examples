@@ -1,1 +1,1 @@
-# java-maven-toys
+# java-maven-examples
