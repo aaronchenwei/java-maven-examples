@@ -6,18 +6,6 @@
 version: 2
 updates:
   - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/fuzzywuzzy/fuzzywuzzy-toy" # Location of package manifests
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/jmh/jmh-toy-maven" # Location of package manifests
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/rsocket/rsocket-ipc-toy" # Location of package manifests
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/vertx/vertx-toy" # Location of package manifests
+    directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
