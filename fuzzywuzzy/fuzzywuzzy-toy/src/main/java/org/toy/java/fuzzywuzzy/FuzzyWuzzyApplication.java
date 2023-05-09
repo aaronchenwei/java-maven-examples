@@ -2,11 +2,9 @@ package org.toy.java.fuzzywuzzy;
 
 import com.google.common.base.Stopwatch;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
-
-import java.util.Arrays;
-import java.util.List;
 import org.apache.commons.lang3.RandomStringUtils;
 
 @Slf4j
